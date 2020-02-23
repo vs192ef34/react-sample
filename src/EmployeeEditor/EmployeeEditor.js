@@ -1,83 +1,63 @@
 import React from "react";
+
+import { Form, Select, Input, Button, Checkbox } from "antd";
+
 import dataSource from "../DataSource/DataSource";
 
+const { Option } = Select;
+
 class EmployeeEditor extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { ...this.props.employee };
-
-    this.onChangeHandler = this.onChangeHandler.bind(this);
-    this.onSubmitHandler = this.onSubmitHandler.bind(this);
-  }
-
-  onChangeHandler(e) {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    const name = e.target.name;
-
-    this.setState({ [name]: value });
-  }
-
-  onSubmitHandler(e) {
+  handleSubmit = e => {
     e.preventDefault();
-
-    const employee = {
-      ...this.state,
-      positionId: parseInt(this.state.positionId, 10)
-    };
-    dataSource.addEmployee(employee);
-
-    this.setState(dataSource.getEmptyEmployee());
-  }
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+        const employee = { ...values };
+        dataSource.addEmployee(employee);
+      }
+    });
+  };
 
   render() {
-    const positions = this.props.positions;
-    const { name, positionId, contractor } = this.state;
+    const { getFieldDecorator } = this.props.form;
+
+    const positionOptions = this.props.positions.map(position => (
+      <Option value={position.id}>{position.title}</Option>
+    ));
+
+    const selectElement = (
+      <Select placeholder="Please select a position">{positionOptions}</Select>
+    );
 
     return (
       <div>
-        <form onSubmit={this.onSubmitHandler}>
-          <fieldset>
-            <div>
-              <label htmlFor={"name"}>Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={name}
-                onChange={this.onChangeHandler}
-              />
-            </div>
-            <div>
-              <label htmlFor={"position"}>Position:</label>
-              <select
-                name={"positionId"}
-                value={positionId}
-                onChange={this.onChangeHandler}
-              >
-                {positions.map(position => {
-                  return (
-                    <option key={position.id} value={position.id}>
-                      {position.title}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div>
-              <label htmlFor={"contractor"}>Is contractor:</label>
-              <input
-                type="checkbox"
-                name="contractor"
-                checked={contractor}
-                onChange={this.onChangeHandler}
-              />
-            </div>
-            <div>
-              <input type="submit" value={"Add"} />
-            </div>
-          </fieldset>
-        </form>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Item label="Employee Name">
+            {getFieldDecorator("name", {
+              rules: [
+                { required: true, message: "Please input employee name." }
+              ]
+            })(<Input placeholder="Employee Name" />)}
+          </Form.Item>
+          <Form.Item label="Position">
+            {getFieldDecorator("positionId", {
+              rules: [
+                { required: true, message: "Please select Employee position." }
+              ]
+            })(selectElement)}
+          </Form.Item>
+          <Form.Item>
+            {getFieldDecorator("contractor", {
+              valuePropName: "checked",
+              initialValue: false
+            })(<Checkbox>Is contractor?</Checkbox>)}
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Create
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   }

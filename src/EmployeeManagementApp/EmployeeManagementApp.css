@@ -1,0 +1,20 @@
+@import "~antd/dist/antd.css";
+
+.ant-layout-header,
+.ant-layout-footer {
+  background: black;
+  color: white;
+}
+
+.ant-layout-footer {
+  line-height: 1.5;
+}
+
+.ant-layout-content {
+  background: white;
+  color: black;
+}
+
+h1.ant-typography {
+  color: white;
+}
