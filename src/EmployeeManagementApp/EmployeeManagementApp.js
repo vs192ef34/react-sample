@@ -38,7 +38,7 @@ class EmployeeManagementApp extends React.Component {
   }
 
   render() {
-    const WrappedEmployeeEditor = Form.create({ name: "employee_editor" })(
+    const WrappedEmployeeEditor = Form.create({ name: "employee-editor" })(
       EmployeeEditor
     );
 

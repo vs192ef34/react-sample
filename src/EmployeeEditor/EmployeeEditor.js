@@ -11,9 +11,7 @@ class EmployeeEditor extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
-        const employee = { ...values };
-        dataSource.addEmployee(employee);
+        dataSource.addEmployee({ ...values });
       }
     });
   };
@@ -29,16 +27,14 @@ class EmployeeEditor extends React.Component {
       <Select placeholder="Please select a position">{positionOptions}</Select>
     );
 
+    const nameInput = getFieldDecorator("name", {
+      rules: [{ required: true, message: "Please input employee name." }]
+    })(<Input placeholder="Employee Name" />);
+
     return (
       <div>
         <Form onSubmit={this.handleSubmit}>
-          <Form.Item label="Employee Name">
-            {getFieldDecorator("name", {
-              rules: [
-                { required: true, message: "Please input employee name." }
-              ]
-            })(<Input placeholder="Employee Name" />)}
-          </Form.Item>
+          <Form.Item label="Employee Name">{nameInput}</Form.Item>
           <Form.Item label="Position">
             {getFieldDecorator("positionId", {
               rules: [
